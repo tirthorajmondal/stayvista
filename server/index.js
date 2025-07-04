@@ -36,7 +36,8 @@ const verifyToken = async (req, res, next) => {
   })
 }
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@main.mq0mae1.mongodb.net/?retryWrites=true&w=majority&appName=Main`
+
+const uri = `mongodb+srv://${process.env.DB_user}:${process.env.DB_password}@stayvista.lpi5mcd.mongodb.net/?retryWrites=true&w=majority&appName=stayvista`
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -76,6 +77,24 @@ async function run() {
         res.status(500).send(err)
       }
     })
+
+    //rooms related api
+    const roomsCollection = client.db('stayvista').collection('rooms')
+
+    // Get all rooms
+    app.get('/rooms', async (req, res) => {
+      const result = await roomsCollection.find().toArray()
+      res.send(result)
+    })
+
+    // Get a single room by id
+    app.get('/room/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await roomsCollection.findOne(query)
+      res.send(result)
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 })
