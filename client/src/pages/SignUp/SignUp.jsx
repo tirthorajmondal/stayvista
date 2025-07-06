@@ -1,7 +1,48 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
+import useAuth from '../../hooks/useAuth'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import { TbFidgetSpinner } from "react-icons/tb";
 
 const SignUp = () => {
+  const { createUser, signInWithGoogle, updateUserProfile, loading, setLoading } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const form = e.target;
+    const name = form.name.value;
+    const image = form.image.files[0]
+    const email = form.email.value;
+    const password = form.password.value;
+
+    // form data for image upload
+    const formData = new FormData()
+    formData.append('image', image)
+
+    try {
+      setLoading(true)
+      // upload image to imgbb
+      const { data } = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`, formData)
+      console.log(data.data.display_url);
+      const photoUrl = data.data.display_url;
+
+      // create user with email and password
+      const result = await createUser(email, password)
+      // save name and photoUrl in profile`
+      await updateUserProfile(name, photoUrl)
+      navigate(location.state, '/')
+      toast.success('User created successfully')
+      console.log(result);
+    }
+    catch (err) {
+      console.log(err)
+    }
+  }
+
   return (
     <div className='flex justify-center items-center min-h-screen'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
@@ -10,6 +51,7 @@ const SignUp = () => {
           <p className='text-sm text-gray-400'>Welcome to StayVista</p>
         </div>
         <form
+          onSubmit={handleSubmit}
           noValidate=''
           action=''
           className='space-y-6 ng-untouched ng-pristine ng-valid'
@@ -48,6 +90,7 @@ const SignUp = () => {
                 type='email'
                 name='email'
                 id='email'
+                autoComplete='email'
                 required
                 placeholder='Enter Your Email Here'
                 className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-rose-500 bg-gray-200 text-gray-900'
@@ -74,10 +117,11 @@ const SignUp = () => {
 
           <div>
             <button
+              disabled={loading}
               type='submit'
               className='bg-rose-500 w-full rounded-md py-3 text-white'
             >
-              Continue
+              {loading ? <TbFidgetSpinner className='animate-spin mx-auto' /> : 'Continue'}
             </button>
           </div>
         </form>

@@ -7,7 +7,9 @@ const CategoryBox = ({ label, icon: Icon }) => {
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
   const category = params.get('category');
-  
+
+
+
   const handleClick = () => {
     let currnetQuery = { category: label }
     const url = queryString.stringifyUrl({
@@ -17,8 +19,6 @@ const CategoryBox = ({ label, icon: Icon }) => {
     navigate(url);
 
   }
-
-
   return (
     <div
       onClick={handleClick}

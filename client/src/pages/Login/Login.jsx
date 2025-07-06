@@ -3,6 +3,24 @@ import { FcGoogle } from 'react-icons/fc'
 import useAuth from '../../hooks/useAuth'
 
 const Login = () => {
+  const { signIn, signInWithGoogle } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogin = e => {
+    e.preventDefault()
+    const form = e.target
+    const email = form.email.value
+    const password = form.password.value
+
+    signIn(email, password)
+      .then(result => {
+        console.log(result)
+        navigate('/')
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
 
   return (
     <div className='flex justify-center items-center min-h-screen'>
@@ -14,6 +32,7 @@ const Login = () => {
           </p>
         </div>
         <form
+          onSubmit={handleLogin}
           noValidate=''
           action=''
           className='space-y-6 ng-untouched ng-pristine ng-valid'

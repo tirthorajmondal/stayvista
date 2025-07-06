@@ -14,7 +14,7 @@ const Rooms = () => {
   console.log(category);
 
   const { data: rooms = [], isLoading } = useQuery({
-    queryKey: ['rooms',category],
+    queryKey: ['rooms', category],
     queryFn: async () => {
       const { data } = await axiosCommon.get(`/rooms?category=${category}`)
       return data;
