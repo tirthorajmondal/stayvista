@@ -2,9 +2,8 @@ import Container from '../../components/Shared/Container'
 import { Helmet } from 'react-helmet-async'
 import RoomReservation from '../../components/RoomDetails/RoomReservation'
 import Heading from '../../components/Shared/Heading'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import useAxiosSecure from '../../hooks/useAxiosSecure'
 import LoadingSpinner from '../../components/Shared/LoadingSpinner'
 import useAxiosCommon from '../../hooks/useAxiosCommon'
 
@@ -12,6 +11,10 @@ import useAxiosCommon from '../../hooks/useAxiosCommon'
 const RoomDetails = () => {
   const { id } = useParams()
   const axiosCommon = useAxiosCommon()
+  const location = useLocation()
+  location.state = location.pathname;
+  console.log(location);
+
 
   const { data: room = {}, isLoading } = useQuery({
     queryKey: ['room', id],

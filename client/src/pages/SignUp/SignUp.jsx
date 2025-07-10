@@ -1,40 +1,35 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { FcGoogle } from 'react-icons/fc'
 import useAuth from '../../hooks/useAuth'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { TbFidgetSpinner } from "react-icons/tb";
+import GoogleSignInBtn from '../../components/Login/GoogleSignInBtn'
+import { imageUpload } from '../../api/utils';
 
 const SignUp = () => {
-  const { createUser, signInWithGoogle, updateUserProfile, loading, setLoading } = useAuth()
+  const { createUser, updateUserProfile, loading, setLoading } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     const form = e.target;
     const name = form.name.value;
     const image = form.image.files[0]
     const email = form.email.value;
     const password = form.password.value;
 
-    // form data for image upload
-    const formData = new FormData()
-    formData.append('image', image)
-
     try {
       setLoading(true)
       // upload image to imgbb
-      const { data } = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`, formData)
-      console.log(data.data.display_url);
-      const photoUrl = data.data.display_url;
+
+      const photoUrl = await imageUpload(image);
 
       // create user with email and password
       const result = await createUser(email, password)
       // save name and photoUrl in profile`
       await updateUserProfile(name, photoUrl)
-      navigate(location.state, '/')
+      navigate(location.state || '/')
       toast.success('User created successfully')
       console.log(result);
     }
@@ -42,6 +37,8 @@ const SignUp = () => {
       console.log(err)
     }
   }
+
+
 
   return (
     <div className='flex justify-center items-center min-h-screen'>
@@ -119,7 +116,11 @@ const SignUp = () => {
             <button
               disabled={loading}
               type='submit'
-              className='bg-rose-500 w-full rounded-md py-3 text-white'
+              className={`
+                ${loading ? 'bg-rose-300' : 'bg-rose-500'}
+                w-full
+                rounded-md py-3
+                text-white`}
             >
               {loading ? <TbFidgetSpinner className='animate-spin mx-auto' /> : 'Continue'}
             </button>
@@ -132,11 +133,8 @@ const SignUp = () => {
           </p>
           <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
         </div>
-        <div className='flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
-          <FcGoogle size={32} />
-
-          <p>Continue with Google</p>
-        </div>
+        {/* google sign in */}
+        <GoogleSignInBtn />
         <p className='px-6 text-sm text-center text-gray-400'>
           Already have an account?{' '}
           <Link

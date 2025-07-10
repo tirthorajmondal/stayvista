@@ -1,10 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { FcGoogle } from 'react-icons/fc'
 import useAuth from '../../hooks/useAuth'
+import GoogleSignInBtn from '../../components/Login/GoogleSignInBtn'
 
 const Login = () => {
-  const { signIn, signInWithGoogle } = useAuth()
+  const { signIn } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const handleLogin = e => {
     e.preventDefault()
@@ -15,7 +16,7 @@ const Login = () => {
     signIn(email, password)
       .then(result => {
         console.log(result)
-        navigate('/')
+        navigate(location.state || '/')
       })
       .catch(err => {
         console.error(err)
@@ -46,6 +47,7 @@ const Login = () => {
                 type='email'
                 name='email'
                 id='email'
+                autoComplete='email'
                 required
                 placeholder='Enter Your Email Here'
                 className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-rose-500 bg-gray-200 text-gray-900'
@@ -92,12 +94,7 @@ const Login = () => {
           <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
         </div>
         {/* GOOGLE LOGIN */}
-        <div
-          className='flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
-          <FcGoogle size={32} />
-
-          <p>Continue with Google</p>
-        </div>
+        <GoogleSignInBtn />
         <p className='px-6 text-sm text-center text-gray-400'>
           Don&apos;t have an account yet?{' '}
           <Link

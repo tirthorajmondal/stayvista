@@ -19,7 +19,7 @@ const Card = ({ room }) => {
                 object-cover 
                 h-full 
                 w-full 
-                group-hover:scale-110 
+                group-hover:scale-105 
                 transition
               '
             src={room?.image}
@@ -37,7 +37,7 @@ const Card = ({ room }) => {
         <div className='font-light text-neutral-500'>5 nights .</div>
         <div className='flex flex-row items-center gap-1'>
           <div className='font-semibold'>$ {room?.price}</div>
-          <div className='font-light'>night</div>
+          <div className='font-light'><small>night</small></div>
         </div>
       </div>
     </Link>

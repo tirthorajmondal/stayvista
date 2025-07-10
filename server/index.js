@@ -95,13 +95,17 @@ async function run() {
     // Get a single room by id
     app.get('/room/:id', async (req, res) => {
       const id = req.params.id;
-      const query = { _id: new ObjectId(id) }
-      const result = await roomsCollection.findOne(query)
+      const query = { _id: new ObjectId(id) };
+      const result = await roomsCollection.findOne(query);
       res.send(result)
     })
 
-
-
+    // add a room in DB
+    app.post('/rooms', async (req, res) => {
+      const room = req.body;
+      const result = await roomsCollection.insertOne(room);
+      res.send(result)
+    })
 
 
 
