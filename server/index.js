@@ -48,6 +48,9 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    const roomsCollection = client.db('stayvista').collection('rooms')
+    const usersCollection = client.db('stayvista').collection('users')
+
     // auth related api
     app.post('/jwt', async (req, res) => {
       const user = req.body
@@ -78,9 +81,43 @@ async function run() {
       }
     })
 
-    //rooms related api
-    const roomsCollection = client.db('stayvista').collection('rooms')
+    // users related api >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    // get all user data from db
+    app.get('/users', async (req, res) => {
+      const result = await usersCollection.find().toArray()
+      res.send(result)
+    })
+    // save user data in DB
+    app.put('/user', async (req, res) => {
+      const user = req.body;
+      const query = { email: user?.email }
+      // check if user is already exist
+      const isExist = usersCollection.findOne(query)
+      if (isExist) {
+        if (user.status === 'Requested') {
+          // if existing user try to become host
+          const result = await usersCollection.updateOne(query, { $set: { status: user?.status } })
+          return res.send(result)
+        }
+        else {
+          // if existing user login again
+          return res.send(isExist)
+        }
+      }
 
+      //save user for the first time 
+      const options = { upsert: true }
+      const updateDoc = {
+        $set: {
+          ...user,
+          timestamp: Date.now()
+        }
+      }
+      const result = await usersCollection.updateOne(query, updateDoc, options)
+      res.send(result)
+    })
+
+    //rooms related api   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Get all rooms
     app.get('/rooms', async (req, res) => {
       const category = req.query.category;
