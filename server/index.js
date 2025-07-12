@@ -87,10 +87,22 @@ async function run() {
       const result = await usersCollection.find().toArray()
       res.send(result)
     })
+
+    // get single user form DB
+    app.get('/user/:email', async (req, res) => {
+      const email = req.params?.email;
+      if (!email || email === 'undefined') {
+        return res.send({ error: { message: 'invilid email' } })
+      }
+      const result = await usersCollection.findOne({ email: email })
+      res.send(result)
+    })
+
     // save user data in DB
     app.put('/user', async (req, res) => {
       const user = req.body;
       const query = { email: user?.email }
+
       // check if user is already exist
       const isExist = usersCollection.findOne(query)
       if (isExist) {
