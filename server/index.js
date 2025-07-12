@@ -98,6 +98,21 @@ async function run() {
       res.send(result)
     })
 
+    // update a user role in DB
+    app.patch('/user/update/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const query = { email }
+      const updateDoc = {
+        $set: {
+          ...user,
+          timestamp: Date.now()
+        }
+      }
+      const result = await usersCollection.updateOne(query, updateDoc)
+      res.send(result)
+    })
+
     // save user data in DB
     app.put('/user', async (req, res) => {
       const user = req.body;

@@ -1,26 +1,32 @@
 import { useState } from 'react'
 import { GrLogout } from 'react-icons/gr'
 import { FcSettings } from 'react-icons/fc'
-import { BsFingerprint } from 'react-icons/bs'
-import { GrUserAdmin } from 'react-icons/gr'
 import { AiOutlineBars } from 'react-icons/ai'
-import { BsGraphUp, BsFillHouseAddFill } from 'react-icons/bs'
-import { MdHomeWork } from 'react-icons/md'
-import { NavLink } from 'react-router-dom'
+import { BsGraphUp } from 'react-icons/bs'
 import useAuth from '../../../hooks/useAuth'
 import { Link } from 'react-router-dom'
 import useRole from '../../../hooks/useRole'
 import MenuItem from './Menu/MenuItem'
+import HostMenu from './Menu/HostMenu'
+import GuestMenu from './Menu/GuestMenu'
+import AdminMenu from './Menu/AdminMenu'
+import ToggleBtn from '../../Shared/Button/ToggleBtn'
 
 const Sidebar = () => {
     const { logOut } = useAuth()
     const [isActive, setActive] = useState(false)
     const [role] = useRole()
-    console.log(role);
+    const [toggle, setToggle] = useState(true)
+
 
     // Sidebar Responsive Handler
     const handleToggle = () => {
         setActive(!isActive)
+    }
+
+    // control host menu items
+    const toggleHandler = () => {
+        setToggle(!toggle)
     }
     return (
         <>
@@ -67,22 +73,22 @@ const Sidebar = () => {
                             </Link>
                         </div>
                     </div>
-
                     {/* Nav Items */}
                     <div className='flex flex-col justify-between flex-1 mt-6'>
                         {/* Conditional toggle button here.. */}
+                        {role === 'host' && <ToggleBtn toggleHandler={toggleHandler} toggle={toggle} />}
 
                         {/*  Menu Items */}
                         <nav>
                             <MenuItem
                                 address={'/dashboard'} label={'Statistics'} icon={BsGraphUp}
                             />
-                            <MenuItem
-                                address={'add-room'} label={'Add Room'} icon={BsFillHouseAddFill}
-                            />
-                            <MenuItem
-                                address={'my-listings'} label={'My Listings'} icon={MdHomeWork}
-                            />
+                            {role === 'guest' && <GuestMenu />}
+
+                            {
+                                role === 'host' ? (toggle ? <HostMenu /> : <GuestMenu />) : undefined
+                            }
+                            {role === 'admin' && <AdminMenu />}
                         </nav>
                     </div>
                 </div>

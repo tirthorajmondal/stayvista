@@ -2,6 +2,7 @@ import useAuth from '../../../hooks/useAuth'
 import { Helmet } from 'react-helmet-async'
 import useRole from '../../../hooks/useRole'
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner'
+import EmptyState from '../../../components/Shared/EmptyState'
 
 const Profile = () => {
     const { user, loading } = useAuth()
@@ -13,9 +14,9 @@ const Profile = () => {
     return (
         <div className='flex justify-center items-center h-screen'>
             <Helmet>
-                <title>Profile</title>
+                <title>Profile | StayVista</title>
             </Helmet>
-            <div className='bg-white shadow-lg rounded-2xl w-3/5'>
+            {user ? <div className='bg-white shadow-lg rounded-2xl w-3/5'>
                 <img
                     alt='profile'
                     src='https://wallpapercave.com/wp/wp10784415.jpg'
@@ -60,7 +61,7 @@ const Profile = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> : <EmptyState address='/' message='Please Login to see your profile' label='Back to Home' />}
         </div>
     )
 }
