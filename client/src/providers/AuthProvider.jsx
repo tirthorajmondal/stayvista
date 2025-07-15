@@ -48,7 +48,7 @@ const AuthProvider = ({ children }) => {
       withCredentials: true,
     })
     return signOut(auth)
-  }
+  } 
 
   const updateUserProfile = (name, photo) => {
     return updateProfile(auth.currentUser, {

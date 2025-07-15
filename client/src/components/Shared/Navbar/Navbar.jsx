@@ -15,6 +15,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [role] = useRole()
+  
   const closeModal = () => {
     setIsModalOpen(false);
   }
