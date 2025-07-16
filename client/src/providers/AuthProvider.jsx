@@ -48,7 +48,7 @@ const AuthProvider = ({ children }) => {
       withCredentials: true,
     })
     return signOut(auth)
-  } 
+  }
 
   const updateUserProfile = (name, photo) => {
     return updateProfile(auth.currentUser, {
@@ -75,7 +75,7 @@ const AuthProvider = ({ children }) => {
       role: 'guest',
       status: 'Verified'
     }
-    const { data } = axios.put(`${import.meta.env.VITE_API_URL}/user`, currentUser)
+    const { data } = await axios.put(`${import.meta.env.VITE_API_URL}/user`, currentUser)
     return data
   }
 

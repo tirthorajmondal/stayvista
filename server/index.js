@@ -119,7 +119,7 @@ async function run() {
       const query = { email: user?.email }
 
       // check if user is already exist
-      const isExist = usersCollection.findOne(query)
+      const isExist = await usersCollection.findOne(query)
       if (isExist) {
         if (user.status === 'Requested') {
           // if existing user try to become host

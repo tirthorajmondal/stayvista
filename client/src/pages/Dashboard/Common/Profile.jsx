@@ -71,7 +71,7 @@ const Profile = () => {
                     className='w-full mb-4 rounded-t-lg h-36'
                 />
                 <div className='flex flex-col items-center justify-center p-4 -mt-16'>
-                    <a href='#' className='relative block'>
+                    <a href='#' className='relative block bg-black/80 rounded-full border-0'>
                         <img
                             alt={user?.displayName}
                             referrerPolicy='no-referrer'
