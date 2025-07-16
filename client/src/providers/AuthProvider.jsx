@@ -1,14 +1,17 @@
 import PropTypes from 'prop-types'
 import { createContext, useEffect, useState } from 'react'
 import {
+  EmailAuthProvider,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
+  reauthenticateWithCredential,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  updatePassword,
   updateProfile,
 } from 'firebase/auth'
 import { app } from '../firebase/firebase.config'
@@ -42,6 +45,13 @@ const AuthProvider = ({ children }) => {
     return sendPasswordResetEmail(auth, email)
   }
 
+  const updateUserPassword = (newPassword) => {
+    setLoading(true)
+    const currentUser = auth.currentUser
+    console.log(currentUser, newPassword);
+    return updatePassword(currentUser, newPassword)
+
+  }
   const logOut = async () => {
     setLoading(true)
     await axios.get(`${import.meta.env.VITE_API_URL}/logout`, {
@@ -57,6 +67,16 @@ const AuthProvider = ({ children }) => {
     })
   }
 
+  // reauthentication with current password for new password
+  const checkCurrentPasswrod = (currentPassword) => {
+    setLoading(true)
+    const user = auth.currentUser;
+    const credential = EmailAuthProvider.credential(
+      user?.email,
+      currentPassword
+    );
+    return reauthenticateWithCredential(user, credential)
+  }
 
   // Get token from server
   const getToken = async email => {
@@ -104,6 +124,8 @@ const AuthProvider = ({ children }) => {
     resetPassword,
     logOut,
     updateUserProfile,
+    updateUserPassword,
+    checkCurrentPasswrod,
   }
 
   return (

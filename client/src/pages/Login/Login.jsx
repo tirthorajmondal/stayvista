@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import GoogleSignInBtn from '../../components/Login/GoogleSignInBtn'
 import { IoArrowBackOutline } from "react-icons/io5";
+import toast from 'react-hot-toast';
 
 
 const Login = () => {
@@ -9,20 +10,20 @@ const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const handleLogin = e => {
+  const handleLogin = async e => {
     e.preventDefault()
     const form = e.target
     const email = form.email.value
     const password = form.password.value || 123456
 
-    signIn(email, password)
-      .then(result => {
-        console.log(result)
-        navigate(location.state || '/')
-      })
-      .catch(err => {
-        console.error(err)
-      })
+    try {
+      await signIn(email, password)
+      navigate(location.state || '/')
+    }
+    catch (err) {
+      console.log(err);
+      toast.error(err.message)
+    }
   }
 
   return (

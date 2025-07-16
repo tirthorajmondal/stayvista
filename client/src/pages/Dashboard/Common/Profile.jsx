@@ -7,14 +7,16 @@ import { useState } from 'react'
 import UpdateProfileModal from '../../../components/Modal/UpdateProfileModal'
 import { imageUpload } from '../../../api/utils'
 import toast from 'react-hot-toast'
+import UpdatePasswordModal from '../../../components/Modal/UpdatePasswordModal'
 
 const Profile = () => {
-    const { user, updateUserProfile, loading } = useAuth()
+    const { user, updateUserProfile, loading, setLoading, updateUserPassword, checkCurrentPasswrod } = useAuth()
     const [role, isLoading] = useRole()
     const [imageText, setImageText] = useState('Image.jpg')
     const [imagePreview, setImagePreview] = useState();
 
     const [isUpdateProfileModal, setUpdateProfileModal] = useState(false)
+    const [isUpdatePasswordModal, setUpdatePasswordModal] = useState(false)
 
     const handleUpdatedImage = (image) => {
         setImagePreview(URL.createObjectURL(image))
@@ -50,11 +52,31 @@ const Profile = () => {
             toast.error(err.message);
         }
     }
-    // close modal
+    // close update profile info modal
     const handleClose = () => {
         setUpdateProfileModal(false)
         setImagePreview(null)
         setImageText('')
+    }
+
+    // password change handler
+    const handleChangePassword = async (e) => {
+        e.preventDefault()
+        const newPassword = e.target.newPassword.value;
+        const currentPassword = e.target.currentPassword.value;
+        try {
+            const result = await checkCurrentPasswrod(currentPassword)
+            if (result) {
+                await updateUserPassword(newPassword);
+                toast.success('Password Updated!')
+            }
+            setUpdatePasswordModal(false)
+            setLoading(false)
+        } catch (err) {
+            toast.error(err.message)
+            setLoading(false)
+        }
+
     }
 
     if (loading || isLoading) return <LoadingSpinner />
@@ -115,9 +137,17 @@ const Profile = () => {
                                     imagePreview={imagePreview}
                                     handleUpdatedImage={handleUpdatedImage}
                                 />
-                                <button className='bg-[#F43F5E] px-7 py-1 rounded-lg text-white cursor-pointer hover:bg-[#af4053]'>
+                                <button
+                                    onClick={() => setUpdatePasswordModal(true)}
+                                    className='bg-[#F43F5E] px-7 py-1 rounded-lg text-white cursor-pointer hover:bg-[#af4053]'>
                                     Change Password
                                 </button>
+                                {/* modal */}
+                                <UpdatePasswordModal
+                                    isUpdatePasswordModal={isUpdatePasswordModal}
+                                    setUpdatePasswordModal={setUpdatePasswordModal}
+                                    handleChangePassword={handleChangePassword}
+                                />
                             </div>
                         </div>
                     </div>

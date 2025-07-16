@@ -1,9 +1,9 @@
-import { Button, Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
+import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
 import { Fragment, useState } from 'react';
 import { TbFidgetSpinner } from 'react-icons/tb';
 import UpdateUserForm from '../Form/UpdateUserForm';
 
-const UpdateProfileModal = ({ handleUpdateProfile, isUpdateProfileModal, setUpdateProfileModal, handleClose,imageText, imagePreview, handleUpdatedImage }) => {
+const UpdateProfileModal = ({ handleUpdateProfile, isUpdateProfileModal, setUpdateProfileModal, handleClose, imageText, imagePreview, handleUpdatedImage }) => {
 
     return (
         <Transition appear show={isUpdateProfileModal} as={Fragment}>
