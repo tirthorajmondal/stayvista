@@ -13,11 +13,10 @@ import AdminMenu from './Menu/AdminMenu'
 import ToggleBtn from '../../Shared/Button/ToggleBtn'
 
 const Sidebar = () => {
-    const { logOut } = useAuth()
+    const { logOut, user } = useAuth()
     const [isActive, setActive] = useState(false)
     const [role] = useRole()
     const [toggle, setToggle] = useState(true)
-
 
     // Sidebar Responsive Handler
     const handleToggle = () => {
@@ -28,6 +27,9 @@ const Sidebar = () => {
     const toggleHandler = () => {
         setToggle(!toggle)
     }
+
+    // become a host in guest menu same as nav
+
     return (
         <>
             {/* Small Screen Navbar */}

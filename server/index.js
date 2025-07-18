@@ -10,7 +10,13 @@ const port = process.env.PORT || 8000
 
 // middleware
 const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:5174, https://dwt1z045-5173.asse.devtunnels.ms/'],
+  origin: [
+    'https://stayvista-72067.web.app',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://dwt1z045-5173.asse.devtunnels.ms',
+
+  ],
   credentials: true,
   optionSuccessStatus: 200,
 }
@@ -35,7 +41,27 @@ const verifyToken = async (req, res, next) => {
     next()
   })
 }
-
+// role related middlewares
+// verify host middleware
+const verifyHost = async (req, res, next) => {
+  const user = req.user;
+  const query = { email: user?.email }
+  const result = await usersCollection.findOne(query)
+  if (!result || result?.role !== 'host') {
+    return res.status(401).send({ message: 'access forbidden!!' })
+  }
+  next()
+}
+// verify admin middleware
+const verifyAdmin = async (req, res, next) => {
+  const user = req.user;
+  const query = { email: user?.email }
+  const result = await usersCollection.findOne(query)
+  if (!result || result?.role !== 'admin') {
+    return res.status(401).send({ message: 'access forbidden!!' })
+  }
+  next()
+}
 
 const uri = `mongodb+srv://${process.env.DB_user}:${process.env.DB_password}@stayvista.lpi5mcd.mongodb.net/?retryWrites=true&w=majority&appName=stayvista`
 const client = new MongoClient(uri, {
@@ -83,7 +109,7 @@ async function run() {
 
     // users related api >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // get all user data from db
-    app.get('/users', async (req, res) => {
+    app.get('/users', verifyToken, verifyAdmin, async (req, res) => {
       const result = await usersCollection.find().toArray()
       res.send(result)
     })
@@ -157,7 +183,7 @@ async function run() {
     })
 
     // Get a single room by id
-    app.get('/room/:id', async (req, res) => {
+    app.get('/room/:id', verifyToken, async (req, res) => { 
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await roomsCollection.findOne(query);
@@ -165,14 +191,14 @@ async function run() {
     })
 
     // add a room in DB
-    app.post('/rooms', async (req, res) => {
+    app.post('/rooms', verifyToken, verifyHost, async (req, res) => {
       const room = req.body;
       const result = await roomsCollection.insertOne(room);
       res.send(result)
     })
 
     // Get all rooms for host
-    app.get('/my-listings/:email', async (req, res) => {
+    app.get('/my-listings/:email', verifyToken, verifyHost, async (req, res) => {
       const email = req.params.email;
       const query = { 'host.email': email };
 
@@ -181,7 +207,7 @@ async function run() {
     })
 
     // delete a room 
-    app.delete('/room/:id', async (req, res) => {
+    app.delete('/room/:id', verifyToken, verifyHost, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await roomsCollection.deleteOne(query)

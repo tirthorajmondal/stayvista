@@ -10,12 +10,14 @@ import toast from 'react-hot-toast'
 import useRole from '../../../hooks/useRole'
 
 const Navbar = () => {
-  const axiosSecure = useAxiosSecure()
   const { user, logOut } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [role] = useRole()
-  
+
+  // for modal
+  const axiosSecure = useAxiosSecure()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   const closeModal = () => {
     setIsModalOpen(false);
   }
@@ -73,12 +75,11 @@ const Navbar = () => {
                     </button>)}
 
                   {/* become host modal here */}
-                  {
-                    isModalOpen && <HostModal
-                      closeModal={closeModal}
-                      isOpen={setIsModalOpen}
-                      modalHandler={modalHandler} />
-                  }
+                  <HostModal
+                    closeModal={closeModal}
+                    isModalOpen={isModalOpen}
+                    modalHandler={modalHandler} />
+
                 </div>
                 {/* Dropdown btn */}
                 <div

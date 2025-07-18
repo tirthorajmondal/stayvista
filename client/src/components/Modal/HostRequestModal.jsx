@@ -8,9 +8,10 @@ import {
 } from '@headlessui/react'
 import { Fragment } from 'react'
 
-const HostModal = ({ closeModal, isOpen, modalHandler }) => {
+const HostModal = ({ closeModal, isModalOpen, modalHandler }) => {
+    console.log(isModalOpen);
     return (
-        <Transition appear show={isOpen} as={Fragment}>
+        <Transition appear show={isModalOpen} as={Fragment}>
             <Dialog as='div' className='relative z-10' onClose={closeModal}>
                 <TransitionChild
                     as={Fragment}
@@ -76,7 +77,9 @@ const HostModal = ({ closeModal, isOpen, modalHandler }) => {
 
 HostModal.propTypes = {
     closeModal: PropTypes.func,
-    isOpen: PropTypes.bool,
+    isModalOpen: PropTypes.bool,
+    modalHandler: PropTypes.func,
+
 }
 
 export default HostModal
